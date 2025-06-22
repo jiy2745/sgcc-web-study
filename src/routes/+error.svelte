@@ -1,3 +1,4 @@
+<!-- 에러 페이지 -->
 <script>
   import { page } from '$app/stores';
   

@@ -12,6 +12,7 @@
     await loadTodos();
   });
   
+  // 할 일 목록 불러오기 (lib/api.js에 정의된 fetchTodo 함수를 이용해)
   async function loadTodos() {
     loading.set(true);
     try {
@@ -24,6 +25,7 @@
     }
   }
   
+  // 할 일 추가하기 (lib/api.js에 정의된 createTodo 함수를 이용해)
   async function handleCreateTodo(event) {
     try {
       const newTodo = await createTodo(event.detail);
@@ -34,6 +36,7 @@
     }
   }
   
+  // 할 일 업데이트하기 (lib/api.js에 정의된 updateTodo 함수를 이용해)
   async function handleUpdateTodo(event) {
     const { id, ...updates } = event.detail;
     try {
@@ -44,7 +47,8 @@
       addNotification('할 일 수정에 실패했습니다.', 'error');
     }
   }
-  
+
+  // 할 일 지우기 (lib/api.js에 정의된 deleteTodo 함수를 이용해)
   async function handleDeleteTodo(event) {
     const id = event.detail;
     try {
@@ -56,9 +60,12 @@
     }
   }
   
+  // notifications 스토어를 이용해 알림을 업데이트하고 3초 후에 제거함
   function addNotification(message, type = 'info') {
     const id = Date.now();
+    // 현재 notifications 스토어의 목록을 list로 받아 전개 구문을 이용하여 id, message, type이 포함된 객체를 추가해 업데이트함
     notifications.update(list => [...list, { id, message, type }]);
+    // 3초 후에 list 전체의 id와 방금 추가한 알림의 id를 비교해 방금 추가한 알림만 제거하고 업데이트함
     setTimeout(() => {
       notifications.update(list => list.filter(n => n.id !== id));
     }, 3000);
@@ -72,9 +79,10 @@
 
 <div class="page">
   <h1>할 일 관리</h1>
-  
+  <!-- lib/components에서 정의한 TodoForm -->
   <TodoForm on:submit={handleCreateTodo} />
   
+  <!-- lib/components에서 정의한 FilterBar -->
   <FilterBar />
   
   {#if $loading}
@@ -91,6 +99,7 @@
     <div class="todo-list">
       {#each $filteredTodos as todo (todo.id)}
         <div animate:flip="{{ duration: 300 }}">
+          <!-- lib/components에서 정의한 TodoItem -->
           <TodoItem 
             {todo}
             on:update={handleUpdateTodo}

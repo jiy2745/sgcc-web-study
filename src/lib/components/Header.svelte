@@ -1,7 +1,9 @@
 <script>
+  // theme을 관리할 수 있도록 src/lib/store.js에서 theme import
   import { theme } from '$lib/stores.js';
   
   function toggleTheme() {
+    //t가 light면 dark로 업데이트하고, 아니면 light로 업데이트함
     theme.update(t => t === 'light' ? 'dark' : 'light');
   }
 </script>
@@ -13,6 +15,7 @@
       <a href="/" class="nav-link">홈</a>
       <a href="/stats" class="nav-link">통계</a>
       <a href="/about" class="nav-link">정보</a>
+      <!-- 클릭하면 toggleTheme을 불러옴 -->
       <button class="theme-toggle" on:click={toggleTheme}>
         {$theme === 'light' ? '🌙' : '☀️'}
       </button>

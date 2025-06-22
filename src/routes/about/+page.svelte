@@ -8,6 +8,7 @@
     mounted = true;
   });
   
+  // features 배열에 title과 description, icon이 있는 객체를 원소로 저장
   const features = [
     { title: 'Svelte 반응성', description: '상태 변화에 따른 자동 UI 업데이트', icon: '⚡' },
     { title: 'SvelteKit 라우팅', description: '파일 기반 라우팅 시스템', icon: '🛣️' },
@@ -20,6 +21,7 @@
   ];
 </script>
 
+<!-- 타이틀 설정 -->
 <svelte:head>
   <title>할 일 관리 - 정보</title>
 </svelte:head>
@@ -36,6 +38,8 @@
     <div class="features">
       <h2>구현된 기능들</h2>
       <div class="features-grid">
+        <!-- 객체를 feature로, 인덱스를 i로 받는다 -->
+        <!-- 인덱스 i를 이용해 계단식 애니메이션을 만든다 -->
         {#each features as feature, i}
           <div 
             class="feature-card"

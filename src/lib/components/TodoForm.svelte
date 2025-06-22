@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
   import { slide } from 'svelte/transition';
   
+  // 부모 컴포넌트에 데이터를 보내는 dispatch를 정의
   const dispatch = createEventDispatcher();
   
   let text = '';
@@ -12,7 +13,9 @@
   const categories = ['업무', '개인', '쇼핑', '건강', '학습'];
   
   function handleSubmit() {
+    // text가 빈 문자열이 아니면
     if (text.trim()) {
+      // 부모 컴포넌트에 submit이란 이름으로 데이터(할 일 텍스트, 중요도, 카테고리, 완료 여부, 생성 날짜) 전송
       dispatch('submit', {
         text: text.trim(),
         priority,
@@ -21,6 +24,7 @@
         createdAt: new Date().toISOString()
       });
       
+      // TodoForm에 있는 데이터들 초기화
       text = '';
       priority = 'medium';
       category = '';
@@ -28,6 +32,7 @@
     }
   }
   
+  // 엔터를 누르면 (그리고 시프트 키를 함께 누르지 않으면) 폼 제출이 되도록 함 (줄바꿈이 되지 않도록 한다) 
   function handleKeydown(event) {
     if (event.key === 'Enter' && !event.shiftKey) {
       event.preventDefault();
@@ -38,6 +43,7 @@
 
 <form class="todo-form" on:submit|preventDefault={handleSubmit}>
   <div class="main-input">
+    <!-- script 태그에 있는 text와 값을 연결시키고 엔터를 누르면 폼을 제출하도록 함-->
     <input
       bind:value={text}
       on:keydown={handleKeydown}
@@ -45,14 +51,17 @@
       class="text-input"
       required
     />
+    <!-- 클릭하면 showAdvanced를 바꿔서 밑쪽에 있는 우선순위와 카테고리를 보여주도록 함 -->
     <button type="button" class="advanced-toggle" on:click={() => showAdvanced = !showAdvanced}>
       ⚙️
     </button>
+    <!-- 텍스트가 비어있으면 버튼 비활성화 -->
     <button type="submit" class="submit-btn" disabled={!text.trim()}>
       추가
     </button>
   </div>
   
+  <!-- showAdvanced가 참이면 밑쪽에 있는 우선순위와 카테고리를 보여줌 -->
   {#if showAdvanced}
     <div class="advanced-options" transition:slide="{{ duration: 200 }}">
       <div class="option-group">
@@ -68,6 +77,7 @@
         <label for="category">카테고리:</label>
         <select bind:value={category} id="category" class="select-input">
           <option value="">일반</option>
+          <!-- each 문법으로 script 태그의 categories의 원소들을 cat에 넣어서 반복함 -->
           {#each categories as cat}
             <option value={cat}>{cat}</option>
           {/each}

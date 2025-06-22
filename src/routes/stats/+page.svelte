@@ -2,27 +2,39 @@
   import { stats, todos } from '$lib/stores.js';
   import { derived } from 'svelte/store';
   
+  // derived 함수를 통해 writable 스토어 todos가 업데이트되면 자동으로 통계를 업데이트함
   const categoryStats = derived(todos, ($todos) => {
     const categories = {};
+    // todos를 forEach 메소드로 돌림
     $todos.forEach(todo => {
+      // 카테고리가 없으면 일반으로 설정
       const cat = todo.category || '일반';
+      // categories[cat]이 없으면 { total: 0, completed: 0 }으로 설정
       if (!categories[cat]) {
         categories[cat] = { total: 0, completed: 0 };
       }
+      // 각 카테고리의 총 할 일 통계에 1을 더한다
       categories[cat].total++;
+      // 완료된 작업이면 각 카테고리의 완료한 할 일 통계에 1을 더한다
       if (todo.completed) {
         categories[cat].completed++;
       }
     });
+
+    //Object.entries를 통해 categories 배열을 객체로 바꾸고, map 메소드를 통해 카테고리의 이름과 통계를 뽑는다
     return Object.entries(categories).map(([name, stats]) => ({
+      // 카테고리 이름
       name,
+      // 통계 (전개 구문)
       ...stats,
+      // 삼항 연산자를 이용하여 퍼센트를 저장
       percentage: stats.total > 0 ? Math.round((stats.completed / stats.total) * 100) : 0
     }));
   });
-  
+  // 마찬가지로 derived 함수를 통해 writable 스토어 todos가 업데이트되면 자동으로 통계를 업데이트함
   const priorityStats = derived(todos, ($todos) => {
     const priorities = { high: 0, medium: 0, low: 0 };
+    // forEach 메소드를 통해 high, medium, low 우선순위를 가진 todo마다 priorities 통계에 1씩 더한다
     $todos.forEach(todo => {
       priorities[todo.priority]++;
     });
@@ -30,6 +42,7 @@
   });
 </script>
 
+<!-- 타이틀 이름 정하기 -->
 <svelte:head>
   <title>할 일 관리 - 통계</title>
 </svelte:head>
@@ -44,6 +57,7 @@
       <div class="stat-label">총 할 일</div>
       
       <div class="progress-bar">
+        <!-- $stats.completed / $stats.total를 계산해 width: % 안에 넣어 진행 상태를 표시 -->
         <div 
           class="progress-fill"
           style="width: {$stats.total > 0 ? ($stats.completed / $stats.total) * 100 : 0}%"
